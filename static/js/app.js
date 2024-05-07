@@ -33,27 +33,54 @@ function buildCharts(sample) {
     // Filter the samples for the object with the desired sample number
     let filteredSample = samples.filter(obj => obj.id === sample)[0];
 
-
     // Get the otu_ids, otu_labels, and sample_values
     let otuIds = filteredSample.otu_ids;
     let otuLabels = filteredSample.otu_labels;
     let sampleValues = filteredSample.sample_values;
 
     // Build a Bubble Chart
-    
+    let bubbleData = [{
+      x: otuIds,
+      y: sampleValues,
+      text: otuLabels,
+      mode: 'markers',
+      marker: {
+          size: sampleValues,
+          color: otuIds,
+          colorscale: 'Earth'
+        }
+      }];
 
     // Render the Bubble Chart
-
+    let bubbleLayout = {
+      title: 'Bacteria Cultures per Sample'
+    };
+    
+    Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-
+    let topOtuIds = otuIds.slice(0, 10).map(id => `OTU ${id}`).reverse();
+    let topSampleValues = sampleValues.slice(0, 10).reverse();
+    let topOtuLabels = otuLabels.slice(0, 10).reverse();
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
-
+    let barData = [{
+      x: topSampleValues,
+      y: topOtuIds,
+      text: topOtuLabels,
+      type: 'bar',
+      orientation: 'h'
+     }];
 
     // Render the Bar Chart
+    let barLayout = {
+      title: 'Top 10 Bacteria Cultures Found'
+    };
 
+    Plotly.newPlot('bar', barData, barLayout);
+  }).catch((error) => {
+    console.error("Error fetching data:", error);
   });
 }
 
